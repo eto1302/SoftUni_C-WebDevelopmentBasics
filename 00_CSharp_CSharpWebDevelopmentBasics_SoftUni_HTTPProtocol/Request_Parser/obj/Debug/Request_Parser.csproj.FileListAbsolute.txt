@@ -1,0 +1,7 @@
+C:\Users\vikmar\source\repos\HTTP_Protocol\Request_Parser\bin\Debug\Request_Parser.exe.config
+C:\Users\vikmar\source\repos\HTTP_Protocol\Request_Parser\bin\Debug\Request_Parser.exe
+C:\Users\vikmar\source\repos\HTTP_Protocol\Request_Parser\bin\Debug\Request_Parser.pdb
+C:\Users\vikmar\source\repos\HTTP_Protocol\Request_Parser\obj\Debug\Request_Parser.csprojResolveAssemblyReference.cache
+C:\Users\vikmar\source\repos\HTTP_Protocol\Request_Parser\obj\Debug\Request_Parser.csproj.CoreCompileInputs.cache
+C:\Users\vikmar\source\repos\HTTP_Protocol\Request_Parser\obj\Debug\Request_Parser.exe
+C:\Users\vikmar\source\repos\HTTP_Protocol\Request_Parser\obj\Debug\Request_Parser.pdb

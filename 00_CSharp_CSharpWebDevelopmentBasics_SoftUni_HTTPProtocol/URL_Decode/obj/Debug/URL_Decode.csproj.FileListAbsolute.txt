@@ -1,0 +1,7 @@
+C:\Users\vikmar\source\repos\HTTP_Protocol\HTTP_Protocol\bin\Debug\HTTP_Protocol.exe.config
+C:\Users\vikmar\source\repos\HTTP_Protocol\HTTP_Protocol\bin\Debug\HTTP_Protocol.exe
+C:\Users\vikmar\source\repos\HTTP_Protocol\HTTP_Protocol\bin\Debug\HTTP_Protocol.pdb
+C:\Users\vikmar\source\repos\HTTP_Protocol\HTTP_Protocol\obj\Debug\URL_Decode.csprojResolveAssemblyReference.cache
+C:\Users\vikmar\source\repos\HTTP_Protocol\HTTP_Protocol\obj\Debug\URL_Decode.csproj.CoreCompileInputs.cache
+C:\Users\vikmar\source\repos\HTTP_Protocol\HTTP_Protocol\obj\Debug\HTTP_Protocol.exe
+C:\Users\vikmar\source\repos\HTTP_Protocol\HTTP_Protocol\obj\Debug\HTTP_Protocol.pdb

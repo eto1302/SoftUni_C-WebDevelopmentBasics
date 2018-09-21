@@ -1,0 +1,7 @@
+C:\Users\vikmar\source\repos\HTTP_Protocol\Validate_URL\bin\Debug\Validate_URL.exe.config
+C:\Users\vikmar\source\repos\HTTP_Protocol\Validate_URL\bin\Debug\Validate_URL.exe
+C:\Users\vikmar\source\repos\HTTP_Protocol\Validate_URL\bin\Debug\Validate_URL.pdb
+C:\Users\vikmar\source\repos\HTTP_Protocol\Validate_URL\obj\Debug\Validate_URL.csprojResolveAssemblyReference.cache
+C:\Users\vikmar\source\repos\HTTP_Protocol\Validate_URL\obj\Debug\Validate_URL.csproj.CoreCompileInputs.cache
+C:\Users\vikmar\source\repos\HTTP_Protocol\Validate_URL\obj\Debug\Validate_URL.exe
+C:\Users\vikmar\source\repos\HTTP_Protocol\Validate_URL\obj\Debug\Validate_URL.pdb
