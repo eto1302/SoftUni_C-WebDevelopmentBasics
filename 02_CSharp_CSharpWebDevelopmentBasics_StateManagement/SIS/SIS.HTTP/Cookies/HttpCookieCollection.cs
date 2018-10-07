@@ -8,6 +8,8 @@ namespace SIS.HTTP.Cookies
     {
         private readonly IDictionary<string, HttpCookie> Cookies;
 
+        private const string HttpCookieStringSeparator = "; ";
+
         public HttpCookieCollection()
         {
             this.Cookies = new Dictionary<string, HttpCookie>();
@@ -39,6 +41,11 @@ namespace SIS.HTTP.Cookies
         public bool HasCookies()
         {
             return Cookies.Count != 0;
+        }
+
+        public override string ToString()
+        {
+            return string.Join(HttpCookieStringSeparator, this.Cookies.Values);
         }
     }
 }

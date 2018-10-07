@@ -10,6 +10,8 @@ namespace SIS.HTTP.Cookies
 
         public HttpCookie(string key, string value, int expires = HttpCookieDefaultExpirationDays)
         {
+            if(string.IsNullOrEmpty(key)||string.IsNullOrEmpty(value)) throw new ArgumentNullException();
+
             this.Key = key;
             this.Value = value;
             this.isNew = true;
@@ -24,13 +26,26 @@ namespace SIS.HTTP.Cookies
 
         public string Value { get; }
 
-        public DateTime Expires { get; }
+        public DateTime Expires { get; private set; }
 
         public bool isNew { get; }
 
+        public bool HttpOnly { get; set; } = true;
+
+        public void Delete()
+        {
+            this.Expires = DateTime.UtcNow.AddDays(-1);
+        }
+
         public override string ToString()
         {
-            return $"{this.Key}={this.Value}; Expires={this.Expires.ToLongTimeString()}";
+            string result = $"{this.Key}={this.Value}; Expires={this.Expires.ToLongTimeString()}";
+            if (this.HttpOnly)
+            {
+                result += "; HttpOnly";
+            }
+
+            return result;
         }
     }
 }
