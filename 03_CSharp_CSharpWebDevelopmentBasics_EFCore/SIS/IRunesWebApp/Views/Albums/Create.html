@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>IRunes</h1>
+
+    <ul>
+        <li><a href ="/">Home</a></li>
+        <li><a href ="/albums/all">Albums</a></li>
+        <li><a href="/users/logout">Logout</a></li>
+    </ul>
+    <hr />
+    <h1>Create Album</h1>
+    <hr>
+    <form action="/albums/create" method="post">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input class="form-control" type="text" name="name" id="name">
+        </div>
+        <div class="form-group">
+            <label for="cover">Cover</label>
+            <input class="form-control" type="text" name="cover" id="cover">
+        </div>
+        <input class="btn btn-primary" type="submit" value="Create">
+    </form>
+<hr />
+    <h3><a href ="/albums/all">Back To All</a></h3>
+<hr/>
+
+    <footer>
+        <p><strong>CopyRight© Sanity Design Studios. All Rights Reserved</strong></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+<h1>IRunes</h1>
+
+<ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/users/login">Login</a></li>
+    <li><a href="/users/register">Register</a></li>
+</ul>
+<hr />
+<h1>Register</h1>
+<form method="post" action="/users/register">
+
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Username:</label>
+        <div class="col-sm-4">
+            <input class="form-control" name="username" type="text"
+                   placeholder="Username" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Password:</label>
+        <div class="col-sm-4">
+            <input class="form-control" name="password" type="password"
+                   placeholder="Password" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Confirm password:</label>
+        <div class="col-sm-4">
+            <input class="form-control" name="confirmPassword" type="password"
+                   placeholder="Confirm Password" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Email</label>
+        <div class="col-sm-4">
+            <input class="form-control" name="email" type="text"
+                   placeholder="Email" />
+        </div>
+    </div>
+    <div>
+        <input type="submit" value="Register" class="btn btn-primary" />
+    </div>
+</form>
+<hr />
+<footer>
+    <p><strong>CopyRight© Sanity Design Studios. All Rights Reserved</strong></p>
+</footer>
+</body>
+</html>
