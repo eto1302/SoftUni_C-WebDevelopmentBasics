@@ -9,7 +9,7 @@ using SIS.WebServer.Results;
 
 namespace IRunesWebApp.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly IHashService hashService;
 

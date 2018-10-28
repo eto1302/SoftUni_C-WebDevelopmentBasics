@@ -7,6 +7,7 @@ using IRunesWebApp.Services;
 using IRunesWebApp.VIewModels;
 using Services;
 using SIS.Framework.ActionResults;
+using SIS.Framework.Attributes.Action;
 using SIS.Framework.Attributes.Methods;
 using SIS.Framework.Controllers;
 using SIS.HTTP.Cookies;
@@ -17,7 +18,7 @@ using SIS.WebServer.Results;
 
 namespace IRunesWebApp.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         private readonly IUsersService usersService;
 
@@ -48,8 +49,9 @@ namespace IRunesWebApp.Controllers
             this.Request.Session.AddParameter("username", model.Username);
             return this.RedirectToAction("/home/index");
         }
-        //[HttpGet]
-        //public IHttpResponse Register(IHttpRequest request) => this.View();
+
+        [Authorize]
+        public IActionResult Register() => this.View();
 
 
         //[HttpPost]
@@ -59,21 +61,21 @@ namespace IRunesWebApp.Controllers
         //    var password = request.FormData["password"].ToString();
         //    var confirmPassword = request.FormData["confirmPassword"].ToString();
 
-        //    
-        //    //if (string.IsNullOrWhiteSpace(userName) || userName.Length < 4)
-        //    //{
-        //    //    return new BadRequestResult("Please provide valid username with length of 4 or more characters.");
-        //    //}
 
-        //    //if (this.Context.Users.Any(x => x.Username == userName))
-        //    //{
-        //    //    return new BadRequestResult("User with the same name already exists.");
-        //    //}
+        //    if (string.IsNullOrWhiteSpace(userName) || userName.Length < 4)
+        //    {
+        //        return new BadRequestResult("Please provide valid username with length of 4 or more characters.");
+        //    }
 
-        //    //if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
-        //    //{
-        //    //    return new BadRequestResult("Please provide password of length 6 or more.");
-        //    //}
+        //    if (this.usersService.Users.Any(x => x.Username == userName))
+        //    {
+        //        return new BadRequestResult("User with the same name already exists.");
+        //    }
+
+        //    if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
+        //    {
+        //        return new BadRequestResult("Please provide password of length 6 or more.");
+        //    }
 
         //    if (password != confirmPassword)
         //    {
@@ -82,10 +84,10 @@ namespace IRunesWebApp.Controllers
         //            HttpResponseStatusCode.SeeOther);
         //    }
 
-        //    
+
         //    var hashedPassword = this.hashService.Hash(password);
 
-        //    
+
         //    var user = new User
         //    {
         //        Username = userName,
@@ -99,7 +101,7 @@ namespace IRunesWebApp.Controllers
         //    }
         //    catch (Exception e)
         //    {
-        //        
+
         //        return new BadRequestResult(
         //            e.Message,
         //            HttpResponseStatusCode.InternalServerError);
@@ -108,7 +110,7 @@ namespace IRunesWebApp.Controllers
         //    var response = new RedirectResult("/");
         //    this.SignInUser(userName, response, request);
 
-        //    
+
         //    return response;
         //}
 

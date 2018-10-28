@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using SIS.Framework.ActionResults;
+using SIS.Framework.Attributes.Action;
 using SIS.Framework.Attributes.Methods;
 using SIS.Framework.Controllers;
 using SIS.Framework.Services;
@@ -49,10 +50,10 @@ namespace SIS.Framework.Routers
                 actionName = requestUrlSplit[1].Capitalize();
             }
 
-            
+
             var controller = this.GetController(controllerName);
 
-            
+
             var action = this.GetAction(requestMethod, controller, actionName);
 
             if (controller == null || action == null)
@@ -64,7 +65,8 @@ namespace SIS.Framework.Routers
 
             var actionResult = InvokeAction(controller, action, actionParameters);
 
-            return this.PrepareResponse(actionResult);
+            return this.Authorize(controller, action) ??
+                this.PrepareResponse(actionResult);
         }
 
         private Controller GetController(string controllerName)
@@ -85,10 +87,7 @@ namespace SIS.Framework.Routers
             return controller;
         }
 
-        private MethodInfo GetAction(
-            string requestMethod,
-            Controller controller,
-            string actionName)
+        private MethodInfo GetAction(string requestMethod, Controller controller, string actionName)
         {
             var actions = this
                 .GetSuitableMethods(controller, actionName)
@@ -125,9 +124,7 @@ namespace SIS.Framework.Routers
             return null;
         }
 
-        private IEnumerable<MethodInfo> GetSuitableMethods(
-            Controller controller,
-            string actionName)
+        private IEnumerable<MethodInfo> GetSuitableMethods(Controller controller, string actionName)
         {
             if (controller == null)
             {
@@ -157,18 +154,12 @@ namespace SIS.Framework.Routers
             throw new InvalidOperationException("Type of result is not supported");
         }
 
-        private static IActionResult InvokeAction(
-            Controller controller,
-            MethodInfo action,
-            object[] actionParameters)
+        private static IActionResult InvokeAction(Controller controller, MethodInfo action, object[] actionParameters)
         {
             return (IActionResult)action.Invoke(controller, actionParameters);
         }
 
-        private object[] MapActionParameters(
-            MethodInfo action,
-            IHttpRequest request,
-            Controller controller)
+        private object[] MapActionParameters(MethodInfo action, IHttpRequest request, Controller controller)
         {
             var actionParameteres = action.GetParameters();
             object[] mappedActionParameters = new object[actionParameteres.Length];
@@ -228,9 +219,7 @@ namespace SIS.Framework.Routers
             return true;
         }
 
-        private object ProcessPrimitiveParameter(
-            ParameterInfo actionParameter,
-            IHttpRequest request)
+        private object ProcessPrimitiveParameter(ParameterInfo actionParameter, IHttpRequest request)
         {
             var value = this.GetParameterFromRequestData(request, actionParameter.Name);
             if (value == null)
@@ -240,9 +229,7 @@ namespace SIS.Framework.Routers
             return Convert.ChangeType(value, actionParameter.ParameterType);
         }
 
-        private object ProcessesBindingModelParameter(
-            ParameterInfo actionParameter,
-            IHttpRequest request)
+        private object ProcessesBindingModelParameter(ParameterInfo actionParameter, IHttpRequest request)
         {
             var bindingModelType = actionParameter.ParameterType;
 
@@ -271,9 +258,7 @@ namespace SIS.Framework.Routers
             return Convert.ChangeType(bindingModelInstance, bindingModelType);
         }
 
-        private object GetParameterFromRequestData(
-            IHttpRequest request,
-            string actionParameterName)
+        private object GetParameterFromRequestData(IHttpRequest request, string actionParameterName)
         {
             if (request.QueryData.ContainsKey(actionParameterName))
             {
@@ -285,6 +270,19 @@ namespace SIS.Framework.Routers
                 return request.FormData[actionParameterName];
             }
 
+            return null;
+        }
+
+        private IHttpResponse Authorize(Controller controller, MethodInfo action)
+        {
+            if (action
+                .GetCustomAttributes()
+                .Where(a => a is AuthorizeAttribute)
+                .Cast<AuthorizeAttribute>()
+                .Any(a => !a.IsAuthorized(controller.Identity)))
+            {
+                return new UnauthorizedResult();
+            }
             return null;
         }
     }

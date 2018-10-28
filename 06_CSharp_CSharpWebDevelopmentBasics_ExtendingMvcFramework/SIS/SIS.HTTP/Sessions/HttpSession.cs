@@ -19,7 +19,11 @@ namespace SIS.HTTP.Sessions
 
         public object GetParameter(string name)
         {
-            return this.parameters[name];
+            if (this.ContainsParameter(name))
+            {
+                return this.parameters[name];
+            }
+            return null;
         }
 
         public bool ContainsParameter(string name)
