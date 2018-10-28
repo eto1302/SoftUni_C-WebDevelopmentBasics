@@ -6,9 +6,9 @@ using SIS.WebServer;
 
 namespace SIS.Framework
 {
-    public static class MvcEngine
+    public class MvcEngine
     {
-        public static void Run(Server server)
+        public void Run(Server server)
         {
             RegisterAssemblyName();
             RegisterControllersData();

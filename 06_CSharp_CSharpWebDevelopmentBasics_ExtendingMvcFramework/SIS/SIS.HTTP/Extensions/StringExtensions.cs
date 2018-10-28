@@ -4,9 +4,9 @@ using System.Text;
 
 namespace SIS.HTTP.Extensions
 {
-    class StringExtensions
+    public static class StringExtensions
     {
-        string Capitalize(string inputString)
+        public static string Capitalize(this string inputString)
         {
             return inputString[0].ToString().ToUpper() + inputString.Substring(1).ToLower();
         }

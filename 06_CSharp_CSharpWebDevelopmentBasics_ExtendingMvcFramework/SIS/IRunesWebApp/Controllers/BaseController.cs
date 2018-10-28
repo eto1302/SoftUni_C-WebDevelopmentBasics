@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using IRunesWebApp.Data;
 using Services;
+using SIS.Framework.Controllers;
 using SIS.HTTP.Cookies;
 using SIS.HTTP.Enums;
 using SIS.HTTP.Requests;
@@ -13,7 +14,7 @@ using SIS.WebServer.Results;
 
 namespace IRunesWebApp.Controllers
 {
-    public abstract class BaseController
+    public abstract class BaseController : Controller
     {
         protected IDictionary<string, string> ViewBag { get; set; }
 
@@ -42,6 +43,8 @@ namespace IRunesWebApp.Controllers
 
         protected readonly UserCookieService userCookieService;
 
+        private bool isAuthenticated { get; set; }
+
         public BaseController()
         {
             this.Context = new IRunesContext();
@@ -51,7 +54,8 @@ namespace IRunesWebApp.Controllers
 
         protected bool IsAuthenticated(IHttpRequest request)
         {
-            return request.Session.ContainsParameter("username");
+            isAuthenticated = request.Session.ContainsParameter("username");
+            return isAuthenticated;
         }
 
         public void SignInUser(string username, IHttpResponse response, IHttpRequest request)
@@ -61,7 +65,7 @@ namespace IRunesWebApp.Controllers
             response.Cookies.Add(new HttpCookie("IRunes_auth", UserCookieValue));
         }
 
-        protected IHttpResponse View(IHttpRequest request, [CallerMemberName] string viewName = "")
+        protected IHttpResponse ViewMethod([CallerMemberName] string viewName = "")
         {
             var layoutView = RootDirectoryRelativePath +
                          ViewsFolderName +
@@ -92,7 +96,7 @@ namespace IRunesWebApp.Controllers
 
             var view = viewLayout.Replace(RenderBodyConstant, viewContent);
 
-            if (this.IsAuthenticated(request))
+            if (isAuthenticated)
             {
                 view = view.Replace(NavigationModelConstant, File.ReadAllText(NavigationLoggedInDirectory));
             }

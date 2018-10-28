@@ -39,7 +39,7 @@ namespace IRunesWebApp.Controllers
             }
 
 
-            return this.View(request);
+            return this.ViewMethod();
 
         }
 
@@ -76,7 +76,7 @@ namespace IRunesWebApp.Controllers
                 tracksHTML += temp;
             }
             this.ViewBag["tracksList"] = tracksHTML;
-            return this.View(request);
+            return this.ViewMethod();
         }
 
         public IHttpResponse Create(IHttpRequest request)
@@ -86,7 +86,7 @@ namespace IRunesWebApp.Controllers
                 return new RedirectResult("/users/login");
             }
 
-            return this.View(request);
+            return this.ViewMethod();
         }
 
         public IHttpResponse PostCreate(IHttpRequest request)

@@ -12,6 +12,7 @@
           "Microsoft.EntityFrameworkCore.Proxies": "2.1.4",
           "Microsoft.EntityFrameworkCore.SqlServer": "2.1.4",
           "Microsoft.EntityFrameworkCore.Tools": "2.1.4",
+          "SIS.Framework": "1.0.0",
           "SIS.HTTP": "1.0.0",
           "SIS.WebServer": "1.0.0",
           "Services": "1.0.0"
@@ -757,6 +758,15 @@
           "Services.dll": {}
         }
       },
+      "SIS.Framework/1.0.0": {
+        "dependencies": {
+          "SIS.HTTP": "1.0.0",
+          "SIS.WebServer": "1.0.0"
+        },
+        "runtime": {
+          "SIS.Framework.dll": {}
+        }
+      },
       "SIS.HTTP/1.0.0": {
         "runtime": {
           "SIS.HTTP.dll": {}
@@ -1311,6 +1321,11 @@
       "hashPath": "system.xml.xmldocument.4.3.0.nupkg.sha512"
     },
     "Services/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SIS.Framework/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

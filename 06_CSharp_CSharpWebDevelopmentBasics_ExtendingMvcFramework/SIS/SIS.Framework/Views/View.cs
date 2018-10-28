@@ -4,14 +4,24 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SIS.Framework.ActionResults;
+using SIS.HTTP.Common;
 
 namespace SIS.Framework.Views
 {
     public class View : IRenderable
     {
+        private const string RenderBodyConstant = "@RenderBody()";
+
+        public const string NavigationModelConstant = "@Model.Navigation";
+
+        private const string NavigationLoggedInDirectory = "../../../Navigation/NavigationLoggedIn.html";
+
+        private const string NavigationLoggedOutDirectory = "../../../Navigation/NavigationLoggedOut.html";
+
         private readonly string fullyQualifiedTemplateName;
 
         private readonly IDictionary<string, object> viewData;
+
 
         public View(string fullyQualifiedTemplateName, IDictionary<string, object> viewData)
         {
@@ -19,9 +29,9 @@ namespace SIS.Framework.Views
             this.viewData = viewData;
         }
 
-        private string ReadFile(string fullyQualifiedTemplateName)
+        private string ReadFile()
         {
-            if (!File.Exists(fullyQualifiedTemplateName))
+            if (!File.Exists(this.fullyQualifiedTemplateName))
             {
                 throw new FileNotFoundException($"View does not exist at {fullyQualifiedTemplateName}");
             }
@@ -30,10 +40,12 @@ namespace SIS.Framework.Views
 
         public string Render()
         {
-            var fullHtml = this.ReadFile(this.fullyQualifiedTemplateName);
-            string renderedHtml = this.RenderHtml(fullHtml);
+            var fullHtml = this.ReadFile();
+            var renderedHtml = this.RenderHtml(fullHtml);
 
-            return fullHtml;
+            var layoutWithView = this.AddViewToLayout(renderedHtml);
+
+            return layoutWithView;
         }
 
         private string RenderHtml(string fullHtml)
@@ -49,6 +61,43 @@ namespace SIS.Framework.Views
             }
 
             return renderedHtml;
+        }
+
+        private bool IsAuthenticated()
+        {
+            return this.viewData.ContainsKey("username");
+        }
+
+        private string AddViewToLayout(string renderedHtml)
+        {
+            var layoutViewPath = MvcContext.Get.RootDirectoryRelativePath +
+                                 GlobalConstants.DirectorySeparator +
+                                 MvcContext.Get.ViewsFolderName +
+                                 GlobalConstants.DirectorySeparator +
+                                 MvcContext.Get.LayoutViewName +
+                                 GlobalConstants.HtmlFileExtension;
+
+            if (!File.Exists(layoutViewPath))
+            {
+                throw new FileNotFoundException($"View does not exist at {fullyQualifiedTemplateName}");
+            }
+
+            var layoutViewContent = File.ReadAllText(layoutViewPath);
+            var layoutWithView = layoutViewContent.Replace(RenderBodyConstant, renderedHtml);
+
+
+            
+            if(IsAuthenticated())
+            {
+                layoutWithView = layoutWithView.Replace(NavigationModelConstant, File.ReadAllText(NavigationLoggedInDirectory));
+            }
+            else
+            {
+                layoutWithView = layoutWithView.Replace(NavigationModelConstant, File.ReadAllText(NavigationLoggedOutDirectory));
+            }
+
+            return layoutWithView;
+
         }
     }
 }

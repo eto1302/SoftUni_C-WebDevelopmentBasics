@@ -17,12 +17,20 @@ namespace SIS.Framework
 
         public string AssemblyName { get; set; }
 
-        public string ControllersFolder { get; set; }
+        public string ControllerSuffix { get; set; } = "Controller";
 
-        public string ControllerSuffix { get; set; }
+        public string ControllersFolder { get; set; } = "Controllers";
+
+        public string ViewsFolderName { get; set; } = "Views";
+
+        public string ModelsFolder { get; set; } = "Models";
+
+        public string ResourceFolderName { get; set; } = "Resources";
+
+        public string LayoutViewName { get; set; } = "_Layout";
+
+        public string RootDirectoryRelativePath { get; set; } = "../../..";
 
         public string ViewsFolder { get; set; }
-
-        public string ModelsFolder { get; set; }
     }
 }

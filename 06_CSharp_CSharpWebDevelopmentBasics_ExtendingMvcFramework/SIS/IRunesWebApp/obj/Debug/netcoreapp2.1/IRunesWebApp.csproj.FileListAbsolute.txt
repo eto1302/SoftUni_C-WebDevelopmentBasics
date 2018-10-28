@@ -16,3 +16,5 @@ C:\Users\vikmar\Desktop\SIS\IRunesWebApp\obj\Debug\netcoreapp2.1\IRunesWebApp.dl
 C:\Users\vikmar\Desktop\SIS\IRunesWebApp\obj\Debug\netcoreapp2.1\IRunesWebApp.pdb
 C:\Users\vikmar\Desktop\SIS\IRunesWebApp\bin\Debug\netcoreapp2.1\Services.dll
 C:\Users\vikmar\Desktop\SIS\IRunesWebApp\bin\Debug\netcoreapp2.1\Services.pdb
+C:\Users\vikmar\Desktop\SIS\IRunesWebApp\bin\Debug\netcoreapp2.1\SIS.Framework.dll
+C:\Users\vikmar\Desktop\SIS\IRunesWebApp\bin\Debug\netcoreapp2.1\SIS.Framework.pdb

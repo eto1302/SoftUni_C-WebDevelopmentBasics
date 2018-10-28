@@ -14,6 +14,7 @@ using SIS.HTTP.Requests;
 using SIS.HTTP.Responses;
 using SIS.HTTP.Sessions;
 using SIS.WebServer.Api;
+using SIS.WebServer.Api.Contracts;
 using SIS.WebServer.Results;
 using SIS.WebServer.Routing;
 
@@ -23,40 +24,34 @@ namespace SIS.WebServer
     {
         private readonly Socket client;
 
-        private readonly IHttpHandler httpHandler;
-
-        private readonly IHttpHandler resourceHandler;
-
-
-
         private const string RootDirectoryRelativePath = "../../..";
 
-        public ConnectionHandler(Socket client, IHttpHandler httpHandler, IHttpHandler resourceHandler)
+        private readonly IHttpHandlingContext handlersContext;
+
+        public ConnectionHandler(Socket client,IHttpHandlingContext handlersContext)
         {
             this.client = client;
-            this.httpHandler = httpHandler;
-            this.resourceHandler = resourceHandler;
+            this.handlersContext = handlersContext;
         }
 
         private async Task<IHttpRequest> ReadRequest()
         {
             var result = new StringBuilder();
-
             var data = new ArraySegment<byte>(new byte[1024]);
 
             while (true)
             {
-                int bytesRead = await this.client.ReceiveAsync(data.Array, SocketFlags.None);
+                int numberOfBytesRead = await this.client.ReceiveAsync(data.Array, SocketFlags.None);
 
-                if (bytesRead == 0)
+                if (numberOfBytesRead == 0)
                 {
                     break;
                 }
 
-                var bytesAsString = Encoding.UTF8.GetString(data.Array, 0, bytesRead);
+                var bytesAsString = Encoding.UTF8.GetString(data.Array, 0, numberOfBytesRead);
                 result.Append(bytesAsString);
 
-                if (bytesRead < 1023)
+                if (numberOfBytesRead < 1023)
                 {
                     break;
                 }
@@ -70,30 +65,40 @@ namespace SIS.WebServer
             return new HttpRequest(result.ToString());
         }
 
-        private string SetRequestSession(IHttpRequest httpRequest)
-        {
-            string sessionId;
-
-            if (httpRequest.Cookies.ContainsCookie(HttpSessionStorage.SessionCookieKey))
-            {
-                var cookie = httpRequest.Cookies.GetCookie(HttpSessionStorage.SessionCookieKey);
-                sessionId = cookie.Value;
-            }
-            else
-            {
-                sessionId = Guid.NewGuid().ToString();
-            }
-
-            httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
-
-            return sessionId;
-        }
-
         private async Task PrepareResponse(IHttpResponse httpResponse)
         {
             byte[] byteSegments = httpResponse.GetBytes();
 
             await this.client.SendAsync(byteSegments, SocketFlags.None);
+        }
+
+        private string SetRequestSession(IHttpRequest httpRequest)
+        {
+            string sessionId = null;
+
+            if (httpRequest.Cookies.ContainsCookie(HttpSessionStorage.SessionCookieKey))
+            {
+                var cookie = httpRequest.Cookies.GetCookie(HttpSessionStorage.SessionCookieKey);
+                sessionId = cookie.Value;
+                httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
+            }
+            else
+            {
+                sessionId = Guid.NewGuid().ToString();
+                httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
+            }
+
+            return sessionId;
+        }
+
+        private void SetResponseSession(IHttpResponse httpResponse, string sessionId)
+        {
+            if (sessionId != null)
+            {
+                httpResponse
+                    .AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey
+                        , sessionId));
+            }
         }
 
         public async Task ProcessRequestAsync()
@@ -106,49 +111,23 @@ namespace SIS.WebServer
                 {
                     string sessionId = this.SetRequestSession(httpRequest);
 
-                    var httpResponse = httpHandler.Handle(httpRequest);
+                    var httpResponse = this.handlersContext.Handle(httpRequest);
 
-                    if (IsResourceRequest(httpRequest))
-                    {
-                        httpResponse = resourceHandler.Handle(httpRequest);
-                    }
                     this.SetResponseSession(httpResponse, sessionId);
 
                     await this.PrepareResponse(httpResponse);
                 }
             }
-
             catch (BadRequestException e)
             {
-                await this.PrepareResponse(new HtmlResult($"<h1>400 Bad Request</h1><p>{e.Message}</p>",
-                    HttpResponseStatusCode.BadRequest));
+                await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.BadRequest));
             }
             catch (Exception e)
             {
-                await this.PrepareResponse(new HtmlResult($"<h1>500 Internal Server Error</h1><p>{e.Message}</p>",
-                    HttpResponseStatusCode.InternalServerError));
+                await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.InternalServerError));
             }
 
             this.client.Shutdown(SocketShutdown.Both);
-        }
-
-        private void SetResponseSession(IHttpResponse httpResponse, string sessionId)
-        {
-            if (sessionId != null)
-            {
-                httpResponse.Cookies.Add(new HttpCookie(HttpSessionStorage.SessionCookieKey, sessionId));
-            }
-        }
-        private bool IsResourceRequest(IHttpRequest httpRequest)
-        {
-            var requestPath = httpRequest.Path;
-            if (requestPath.Contains('.'))
-            {
-                var requestPathExtension = requestPath
-                    .Substring(requestPath.LastIndexOf('.'));
-                return GlobalConstants.ResourceExtensions.Contains(requestPathExtension);
-            }
-            return false;
         }
     }
 }

@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IRunesWebApp.Models;
+using IRunesWebApp.Services;
+using IRunesWebApp.VIewModels;
 using Services;
+using SIS.Framework.ActionResults;
+using SIS.Framework.Attributes.Methods;
+using SIS.Framework.Controllers;
 using SIS.HTTP.Cookies;
 using SIS.HTTP.Enums;
 using SIS.HTTP.Requests;
@@ -12,89 +17,101 @@ using SIS.WebServer.Results;
 
 namespace IRunesWebApp.Controllers
 {
-    public class UsersController : BaseController
+    public class UsersController : Controller
     {
-        
-        private readonly HashService hashService;
+        private readonly IUsersService usersService;
 
-        public UsersController()
+        public UsersController(IUsersService usersService)
         {
-            hashService = new HashService();
+            this.usersService = usersService;
         }
+        [HttpGet]
+        public IActionResult Login() => this.View();
 
-        public IHttpResponse Login(IHttpRequest request) => this.View(request);
-
-        public IHttpResponse PostLogin(IHttpRequest request)
+        [HttpPost]
+        public IActionResult Login(LoginViewModel model)
         {
-            var username = request.FormData["username"].ToString();
-            var password = request.FormData["password"].ToString();
-
-            
-
-            var hashedPassword = this.hashService.Hash(password);
-
-            var user = this.Context.Users
-                .FirstOrDefault(u => u.Username == username
-                            && u.HashedPassword == hashedPassword);
-
-            if (user == null)
+            if (!ModelState.IsValid.HasValue || !ModelState.IsValid.Value)
             {
-                return new RedirectResult("/users/login");
+                return this.RedirectToAction("/users/login");
             }
 
-            
-            
-            request.Session.AddParameter("username", user.Username);
-            return new RedirectResult("/");
+            var userExists = this.usersService
+                .ExistsByUsernameAndPassword(
+                    model.Username,
+                    model.Password);
 
+            if (!userExists)
+            {
+                return this.RedirectToAction("/users/login");
+            }
+            this.Request.Session.AddParameter("username", model.Username);
+            return this.RedirectToAction("/home/index");
         }
+        //[HttpGet]
+        //public IHttpResponse Register(IHttpRequest request) => this.View();
 
-        public IHttpResponse PostRegister(IHttpRequest request)
-        {
-            var userName = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
-            var confirmPassword = request.FormData["confirmPassword"].ToString();
 
-            if (password != confirmPassword)
-            {
-                return new BadRequestResult("Passwords do not match.", HttpResponseStatusCode.SeeOther);
-            }
+        //[HttpPost]
+        //public IHttpResponse Register(IHttpRequest request)
+        //{
+        //    var userName = request.FormData["username"].ToString().Trim();
+        //    var password = request.FormData["password"].ToString();
+        //    var confirmPassword = request.FormData["confirmPassword"].ToString();
 
-            // Hash password
-            var hashedPassword = this.hashService.Hash(password);
+        //    
+        //    //if (string.IsNullOrWhiteSpace(userName) || userName.Length < 4)
+        //    //{
+        //    //    return new BadRequestResult("Please provide valid username with length of 4 or more characters.");
+        //    //}
 
-            // Create user
-            var user = new User
-            {
-                Username = userName,
-                HashedPassword = hashedPassword,
-            };
-            this.Context.Users.Add(user);
+        //    //if (this.Context.Users.Any(x => x.Username == userName))
+        //    //{
+        //    //    return new BadRequestResult("User with the same name already exists.");
+        //    //}
 
-            try
-            {
-                this.Context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                // TODO: Log error
-                return new BadRequestResult(e.Message, HttpResponseStatusCode.InternalServerError);
-            }
+        //    //if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
+        //    //{
+        //    //    return new BadRequestResult("Please provide password of length 6 or more.");
+        //    //}
 
-            request.Session.AddParameter("username", user.Username);
-            return new RedirectResult("/");
-        }
+        //    if (password != confirmPassword)
+        //    {
+        //        return new BadRequestResult(
+        //            "Passwords do not match.",
+        //            HttpResponseStatusCode.SeeOther);
+        //    }
 
-        public IHttpResponse Register(IHttpRequest request) => this.View(request);
+        //    
+        //    var hashedPassword = this.hashService.Hash(password);
 
-        public IHttpResponse Logout(IHttpRequest request)
-        {
-            if (this.IsAuthenticated(request))
-            {
-                request.Session.RemoveParameter("username");
-            }
+        //    
+        //    var user = new User
+        //    {
+        //        Username = userName,
+        //        HashedPassword = hashedPassword,
+        //    };
+        //    this.Context.Users.Add(user);
 
-            return new RedirectResult("/");
-        }
+        //    try
+        //    {
+        //        this.Context.SaveChanges();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        
+        //        return new BadRequestResult(
+        //            e.Message,
+        //            HttpResponseStatusCode.InternalServerError);
+        //    }
+
+        //    var response = new RedirectResult("/");
+        //    this.SignInUser(userName, response, request);
+
+        //    
+        //    return response;
+        //}
+
+
     }
 }

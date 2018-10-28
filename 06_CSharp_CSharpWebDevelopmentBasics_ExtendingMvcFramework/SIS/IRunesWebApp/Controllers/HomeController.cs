@@ -1,23 +1,28 @@
-﻿using SIS.HTTP.Enums;
+﻿using System;
+using Services;
+using SIS.Framework.ActionResults;
+using SIS.Framework.Controllers;
+using SIS.HTTP.Enums;
 using SIS.HTTP.Requests;
 using SIS.HTTP.Responses;
 using SIS.WebServer.Results;
 
 namespace IRunesWebApp.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : Controller
     {
-        
+        private readonly IHashService hashService;
 
-        public IHttpResponse Index(IHttpRequest request)
+        public HomeController(IHashService hashService)
         {
-            if (request.Session.ContainsParameter("username"))
-            {
-                var username = request.Session.GetParameter("username").ToString();
-                this.ViewBag["username"] = username;
-                return this.View(request, "IndexLoggedIn");
-            }
-            return this.View(request);
+            this.hashService = hashService;
+        }
+
+        public IActionResult Index(IndexViewModel model)
+        {
+            var hashedUsername = this.hashService.Hash(model.Username);
+            Console.WriteLine(hashedUsername);
+            return this.View();
         }
 
     }

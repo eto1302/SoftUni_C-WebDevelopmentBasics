@@ -33,7 +33,7 @@ namespace IRunesWebApp.Controllers
 
             this.ViewBag["albumId"] = albumId;
 
-            return this.View(request);
+            return this.ViewMethod();
         }
 
         public IHttpResponse PostCreate(IHttpRequest request)
@@ -112,7 +112,7 @@ namespace IRunesWebApp.Controllers
             this.ViewBag["trackLink"] = track.Link;
             this.ViewBag["albumId"] = track.AlbumId;
             this.ViewBag["trackPrice"] = track.Price.ToString("F2");
-            return this.View(request);
+            return this.ViewMethod();
         }
     }
 }
